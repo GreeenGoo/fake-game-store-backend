@@ -102,7 +102,7 @@ public class OrderServiceImpl implements OrderService {
         return order.map(this::mapOrderToOrderDto);
     }
 
-    public boolean addGameToOrder(String gameId, String userId) {
+    public Optional<OrderDto> addGameToOrder(String gameId, String userId) {
         Optional<Order> order = orderRepository.findFirstByUserIdAndStatusAndPaymentStatus(TypeConverter.convertStringToUUID(userId), OrderStatus.PROCESSING, PaymentStatus.UNPAID);
         Optional<Game> game = gameRepository.findById(TypeConverter.convertStringToUUID(gameId));
 
@@ -122,7 +122,7 @@ public class OrderServiceImpl implements OrderService {
                 q++;
                 gameOrder.setQuantity(q);
                 gameOrderRepository.save(gameOrder);
-                return true;
+                return Optional.of(mapOrderToOrderDto(orderRepository.findById(order.get().getId()).get()));
             }
         }
         GameOrder gameOrder = new GameOrder();
@@ -131,7 +131,7 @@ public class OrderServiceImpl implements OrderService {
         gameOrder.setOrder(order.get());
         gameOrder.setQuantity(1);
         gameOrderRepository.save(gameOrder);
-        return true;
+        return Optional.of(mapOrderToOrderDto(orderRepository.findById(order.get().getId()).get()));
     }
 
     public Optional<OrderDto> deleteGameFromOrder(String gameId, String userId) {
@@ -332,9 +332,8 @@ public class OrderServiceImpl implements OrderService {
         orders.forEach(order -> {
             System.out.println(order.getId());
             if (order.getUpdatedAt().before(Timestamp.from(Instant.now().minusSeconds(60 * 30)))) {
-                System.out.println("Declined");
                 order.setStatus(OrderStatus.DECLINED);
-                order.setPaymentStatus(PaymentStatus.UNPAID);
+                order.setPaymentStatus(PaymentStatus.REJECTED);
                 order.setUpdatedAt(Timestamp.from(Instant.now()));
                 orderRepository.save(order);
             }
