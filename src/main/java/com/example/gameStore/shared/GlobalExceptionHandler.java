@@ -78,7 +78,7 @@ public class GlobalExceptionHandler {
         if (matcher.find()) {
             String field = matcher.group(1);
             String value = matcher.group(2);
-            return String.format("A user with the %s '%s' already exists.", field, value);
+            return String.format("An entity with the %s '%s' already exists.", field, value);
         }
 
         return "An error occurred while processing your request.";

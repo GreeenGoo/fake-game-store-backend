@@ -114,6 +114,16 @@ public class GameController {
                 .orElseThrow(() -> new RuntimeException("Failed to update game"));
     }
 
+    @DeleteMapping("games/{id}")
+    public ResponseEntity<GlobalResponse<Void>> deleteGame(HttpServletRequest request, @PathVariable String id) {
+        String userId = (String) request.getAttribute("userId");
+        if (gameService.deleteGame(id, userId)) {
+            return ResponseEntity.ok(new GlobalResponse<>(null));
+        }
+        throw new ResourceNotFoundException("Game with such Id not found or you do not have permission to delete it");
+    }
+
+
     @PatchMapping("games/deactivation/{gameId}")
     public ResponseEntity<GlobalResponse<GameDto>> deactivateGame(@PathVariable String gameId) {
         Optional<GameDto> game = gameService.deactivateGame(gameId);

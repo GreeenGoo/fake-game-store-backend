@@ -25,6 +25,8 @@ public interface GameService {
 
     Optional<GameDto> updateGame(@RequestBody UpdateGameRequestDto updateGameRequestDto);
 
+    boolean deleteGame(String id, String userId);
+
     Optional<GameDto> deactivateGame(String gameId);
 
     Optional<GameDto> activateGame(String gameId);

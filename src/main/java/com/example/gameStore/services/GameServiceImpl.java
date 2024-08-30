@@ -22,7 +22,6 @@ import com.example.gameStore.repositories.ReviewRepository;
 import com.example.gameStore.repositories.UserRepository;
 import com.example.gameStore.services.interfaces.GameService;
 import com.example.gameStore.shared.exceptions.BadRequestException;
-import com.example.gameStore.shared.exceptions.NoContentException;
 import com.example.gameStore.shared.exceptions.ResourceNotFoundException;
 import com.example.gameStore.utilities.GameSpecification;
 import com.example.gameStore.utilities.TypeConverter;
@@ -180,6 +179,15 @@ public class GameServiceImpl implements GameService {
         modelMapper.map(updateGameRequestDto, existingGame);
         Game savedGame = gameRepository.save(existingGame);
         return Optional.of(modelMapper.map(savedGame, GameDto.class));
+    }
+
+    @Override
+    public boolean deleteGame(String id, String userId) {
+        Optional<Game> optionalDeletingGame = gameRepository.findById(TypeConverter.convertStringToUUID(id));
+        if (optionalDeletingGame.isEmpty()) return false;
+        keyRepository.deleteKeysByGameId(TypeConverter.convertStringToUUID(id));
+        gameRepository.delete(optionalDeletingGame.get());
+        return true;
     }
 
     @Override

@@ -48,7 +48,7 @@ public class Game {
     @Column(name = "quantity")
     private int quantity;
 
-    @Column(name = "thumbnail", nullable = false)
+    @Column(name = "thumbnail", nullable = false, columnDefinition = "TEXT")
     private String thumbnail = "https://res.cloudinary.com/df5iprard/image/upload/v1723707873/2024-08-15_104400_j19p5p.png";
 
     @Column(name = "image", columnDefinition = "TEXT[]")
